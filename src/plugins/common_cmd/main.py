@@ -31,10 +31,10 @@ class CommonCmd(commands.Cog):
     if isinstance(ctx.author, discord.User) and ctx.guild is None:
       raise commands.NoPrivateMessage("Vous ne pouvez pas utiliser cette commande en message privé.")
     
-    if isinstance(ctx.channel, discord.TextChannel):
+    if not isinstance(ctx.channel, discord.TextChannel):
       raise commands.CommandInvokeError("Vous devez appeler cette commande depuis un salon textuel.")
     
-    if ctx.author.guild_permissions.manage_messages:
+    if not ctx.author.guild_permissions.manage_messages:
       raise commands.CommandInvokeError("Vous n'avez pas les permissions pour cette commande.")
     
     # TRAITEMENT DE LA FONCTION

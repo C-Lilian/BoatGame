@@ -1,6 +1,7 @@
 import mysql.connector
 import dotenv, os
 import discord
+import datetime
 from discord.ext import commands
 
 mydb = mysql.connector.connect(
@@ -48,6 +49,8 @@ class DatabaseCmd(commands.Cog):
         description="Votre compte à bien été créé.",
         color=discord.Color.dark_blue()
       )
+      info_embed.set_footer(text='© BoatGame')
+      info_embed.timestamp = datetime.datetime.now()
       return await ctx.send(embed=info_embed)
     
     return
@@ -65,6 +68,66 @@ class DatabaseCmd(commands.Cog):
     
     if isinstance(error, commands.CommandInvokeError):
       return await ctx.send("Vous possédez déjà un compte.")
+    
+    raise error
+  
+  
+  @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.")
+  async def getInfo(self, ctx : commands.Context) -> discord.Message:
+    """ Get your own information
+    
+    Attributes :
+      self : ...
+      ctx : Context of the commands.
+    """
+    cursor = mydb.cursor(buffered=True, dictionary=True)
+    #PRÉPARATION DE LA REQUÊTE.
+    sql = f"SELECT BG_BANK_ACCOUNT, BG_ON_MYSELF FROM bg_users WHERE BG_ID_DISCORD = {ctx.author.id}"
+    
+    #GESTION DE LA REQUÊTE.
+    cursor.execute(sql)
+    row_count = cursor.rowcount
+    
+    if row_count > 0:
+      # RÉCUPÉRATION DES VARIABLES.
+      row = cursor.fetchone()
+      bgBankAccount = row['BG_BANK_ACCOUNT']
+      bgOnMyself = row['BG_ON_MYSELF']
+      
+      # FERMETURE DU CURSEUR
+      cursor.close()
+      
+      # PRÉPARATION DE L'EMBED
+      titre = f"Voici vos informations {ctx.author.name} :"
+      info_embed = discord.Embed(title=titre, color=discord.Color.dark_blue())
+      info_embed.add_field(name="Tout solde :",value=f"{bgBankAccount+bgOnMyself}€.",inline=False)
+      info_embed.add_field(name="Sur votre compte :",value=f"{bgBankAccount}€.",inline=False)
+      info_embed.add_field(name="Sur vous :",value=f"{bgOnMyself}€",inline=False)
+      info_embed.set_footer(text='© BoatGame')
+      info_embed.timestamp = datetime.datetime.now()
+      
+      # ON RETOURNE LE MESSAGE FINAL.
+      return await ctx.send(embed=info_embed)
+      
+    else:
+      # ON RÉCUPÈRE L'ERREUR
+      raise commands.CommandInvokeError("Aucun compte lié.")
+    
+    return
+  
+  
+  @getInfo.error
+  async def getInfo_error(self, ctx : commands.Context, error : commands.CommandError):
+    """ Help with error handling.
+    
+    Attributes :
+      self : ...
+      ctx : Context of the commands.
+      error : The error received.
+    """
+    
+    if isinstance(error, commands.CommandInvokeError):
+      return await ctx.send("Aucun compte n'est associé à votre identifiant.")
     
     raise error
 

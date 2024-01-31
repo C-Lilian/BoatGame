@@ -32,7 +32,8 @@ Ci-dessous la liste des évènements disponibles :
 Ci-dessous la liste des commandes disponibles (préfix : "!") :
  - *clear* : Efface un certain nombre de message dans le chat.
  - *setAccount* : Permet la création d'un compte dans la base de données dédié.
- - *getInfo* : Permet la récupération des informations de l'utilisateur qui lance la commande.
+ - *getInfo* | *recap* : Permet la récupération des informations de l'utilisateur qui lance la commande.
+ - *deposit* : Permet de déposer de l'argent vers son compte.
 
 ## License
 

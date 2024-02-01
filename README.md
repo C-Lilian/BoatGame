@@ -37,6 +37,7 @@ Ci-dessous la liste des commandes disponibles (préfix : "!") :
  - *deposit* : Permet de déposer de l'argent vers son compte.
  - *draw* | *tirer* : Permet de retirer de l'argent depuis son compte.
  - *betGame* : Pariez un somme sur un nombre entre 1 et 100 et voyez si vous gagnez ou non.
+ - *pof* : Pariez un somme sur un nombre entre 1 (pile) et 0 (face) et voyez si vous gagnez ou non.
 
 ## License
 

@@ -24,6 +24,7 @@ class DatabaseCmd(commands.Cog):
     self.bot = bot
   
   
+  # SET ACCOUNT
   @commands.command(brief="Permet la création d'un compte.",description="Inscription dans la base de données avec les données personnelles.")
   async def setAccount(self, ctx : commands.Context) -> discord.Message:
     """ Allow or not users to set an account.
@@ -72,6 +73,7 @@ class DatabaseCmd(commands.Cog):
     raise error
   
   
+  # GET INFO
   @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.",aliases=['recap'])
   async def getInfo(self, ctx : commands.Context) -> discord.Message:
     """ Get your own information
@@ -131,6 +133,7 @@ class DatabaseCmd(commands.Cog):
     raise error
   
   
+  # DEPOSIT
   @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.")
   async def deposit(self, ctx : commands.Context, toDeposit : int) -> discord.Message:
     """ Deposit on your bank account
@@ -138,7 +141,7 @@ class DatabaseCmd(commands.Cog):
     Attributes :
       self : ...
       ctx : Context of the commands.
-      toDeposit ; Monney to deposit.
+      toDeposit : Monney to deposit.
     """
     
     cursor = mydb.cursor(buffered=True, dictionary=True)
@@ -196,6 +199,86 @@ class DatabaseCmd(commands.Cog):
   
   @deposit.error
   async def deposit_error(self, ctx : commands.Context, error : commands.CommandError):
+    """ Help with error handling.
+    
+    Attributes :
+      self : ...
+      ctx : Context of the commands.
+      error : The error received.
+    """
+    
+    if isinstance(error, commands.CommandInvokeError):
+      return await ctx.send("Une erreur s'est produite lors du dépôt.")
+    
+    raise error
+  
+  
+  # DRAW
+  @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.",aliases=['tirer'])
+  async def draw(self, ctx : commands.Context, toDraw : int) -> discord.Message:
+    """ Draw on your bank account
+    
+    Attributes :
+      self : ...
+      ctx : Context of the commands.
+      toDraw : Monney to Draw.
+    """
+    
+    cursor = mydb.cursor(buffered=True, dictionary=True)
+    
+    # PRÉPARATION DE LA REQUÊTE.
+    sql = f"SELECT BG_BANK_ACCOUNT FROM bg_users WHERE BG_ID_DISCORD = {ctx.author.id}"
+    
+    # ON VÉRIFIE QUE LE COMPTE EXISTE.
+    cursor.execute(sql)
+    row_count = cursor.rowcount
+    
+    if row_count > 0:
+      # RÉCUPÉRATION DES VARIABLES.
+      row = cursor.fetchone()
+      bgOnMyself = row['BG_BANK_ACCOUNT']
+      
+      # FERMETURE DU CURSEUR
+      cursor.close()
+      
+      if bgOnMyself < toDraw:
+        return await ctx.send("Vous possédez moins que ce que vous voulez poser.")
+      
+    else:
+      # ON RÉCUPÈRE L'ERREUR
+      raise commands.CommandInvokeError("Aucun compte lié.")
+    
+    
+    cursor = mydb.cursor(buffered=True, dictionary=True)
+    
+    #PRÉPARATION DE LA REQUÊTE.
+    sql = "UPDATE bg_users SET BG_ON_MYSELF = BG_ON_MYSELF + %s, BG_BANK_ACCOUNT = BG_BANK_ACCOUNT - %s WHERE BG_ID_DISCORD = %s"
+    val = (toDraw, toDraw, ctx.author.id)
+    
+    try:
+      # EXÉCUTION DE LA REQUÊTE
+      cursor.execute(sql, val)
+      mydb.commit()
+      cursor.close()
+      
+    except mysql.connector.errors.ProgrammingError as err:
+      # GESTION DES ERREURS
+      raise commands.CommandInvokeError("Problème de paramètre.")
+      
+    else:
+      # PRÉPARATION DE L'EMBED
+      titre = f"Dépôt sur votre compte, {ctx.author.name} :"
+      info_embed = discord.Embed(title=titre, description=f"Vous venez de réaliser un retrait de {toDraw}€ sur votre compte.", color=discord.Color.dark_blue())
+      info_embed.set_footer(text='© BoatGame')
+      info_embed.timestamp = datetime.datetime.now()
+      
+      # ON RETOURNE LE MESSAGE FINAL.
+      return await ctx.send(embed=info_embed)
+    
+    return
+  
+  @draw.error
+  async def draw_error(self, ctx : commands.Context, error : commands.CommandError):
     """ Help with error handling.
     
     Attributes :

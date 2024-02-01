@@ -23,6 +23,7 @@ DBUSRNAME=dbUsernameHere
 DBMDP=dbPwdHere
 DBNAME=dbNameHere
 ```
+Enfin pour la base de données, veuillez importer le fichier **creation_bd_boat_game.sql** dans mysql afin d'instancier la base de données, ses tables ainsi qu'un utilisateur nommé *BoatGame*. Pensez à changer le mot de passe du nouvel utilisateur.
 
 ## Commandes & évènements disponibles
 
@@ -34,6 +35,7 @@ Ci-dessous la liste des commandes disponibles (préfix : "!") :
  - *setAccount* : Permet la création d'un compte dans la base de données dédié.
  - *getInfo* | *recap* : Permet la récupération des informations de l'utilisateur qui lance la commande.
  - *deposit* : Permet de déposer de l'argent vers son compte.
+ - *draw* | *tirer* : Permet de retirer de l'argent depuis son compte.
 
 ## License
 

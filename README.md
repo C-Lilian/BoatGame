@@ -36,6 +36,7 @@ Ci-dessous la liste des commandes disponibles (préfix : "!") :
  - *getInfo* | *recap* : Permet la récupération des informations de l'utilisateur qui lance la commande.
  - *deposit* : Permet de déposer de l'argent vers son compte.
  - *draw* | *tirer* : Permet de retirer de l'argent depuis son compte.
+ - *betGame* : Pariez un somme sur un nombre entre 1 et 100 et voyez si vous gagnez ou non.
 
 ## License
 

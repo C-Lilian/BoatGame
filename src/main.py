@@ -19,7 +19,8 @@ class BoatGame(commands.Bot):
   async def setup_hook(self) -> None:
     """ Setup the different extension and other... """
     await self.load_extension("plugins.common_cmd.main")
-    await self.load_extension("plugins.database_cmd.main")  
+    await self.load_extension("plugins.database_cmd.main")
+    await self.load_extension("plugins.game_cmd.main")
     await self.tree.sync()
   
   

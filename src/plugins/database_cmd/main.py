@@ -134,7 +134,7 @@ class DatabaseCmd(commands.Cog):
   
   
   # DEPOSIT
-  @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.")
+  @commands.command(brief="Dépôt d'argent.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.")
   async def deposit(self, ctx : commands.Context, toDeposit : int) -> discord.Message:
     """ Deposit on your bank account
     
@@ -214,7 +214,7 @@ class DatabaseCmd(commands.Cog):
   
   
   # DRAW
-  @commands.command(brief="Récupération d'informations.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.",aliases=['tirer'])
+  @commands.command(brief="Retrait d'argent.",description="Permet à l'utilisateur qui lance la commande de récupérer ses informations.",aliases=['tirer'])
   async def draw(self, ctx : commands.Context, toDraw : int) -> discord.Message:
     """ Draw on your bank account
     

@@ -66,6 +66,18 @@ class CommonCmd(commands.Cog):
       return await ctx.send("Les permissions sont insuffisantes.")
     
     raise error
+  
+  
+  @commands.command(brief="Envoie un bateau.",description="Pour que le nom du projet ait un rapport avec les bateaux XD")
+  async def boat(self, ctx : commands.Context) -> discord.Message:
+    """ For Sending boat.
+    
+    Attributes :
+      self : ...
+      ctx : Context of the commands.
+    """
+    
+    return await ctx.send(":sailboat:")
 
 
 async def setup(bot : commands.Bot) -> None:

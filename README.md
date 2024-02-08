@@ -32,12 +32,13 @@ Ci-dessous la liste des évènements disponibles :
 
 Ci-dessous la liste des commandes disponibles (préfix : "!") :
  - *clear* : Efface un certain nombre de message dans le chat.
+ - *boat* : Envoie un bateau...
  - *setAccount* : Permet la création d'un compte dans la base de données dédié.
  - *getInfo* | *recap* : Permet la récupération des informations de l'utilisateur qui lance la commande.
  - *deposit* : Permet de déposer de l'argent vers son compte.
  - *draw* | *tirer* : Permet de retirer de l'argent depuis son compte.
- - *betGame* : Pariez un somme sur un nombre entre 1 et 100 et voyez si vous gagnez ou non.
- - *pof* : Pariez un somme sur un nombre entre 1 (pile) et 0 (face) et voyez si vous gagnez ou non.
+ - *betGame* | *jeu1* : Pariez un somme sur un nombre entre 1 et 100 et voyez si vous gagnez ou non.
+ - *pof* | *jeu2* : Pariez un somme sur un pile ou face réaliser avec des boutons et voyez si vous gagnez ou non.
 
 ## License
 

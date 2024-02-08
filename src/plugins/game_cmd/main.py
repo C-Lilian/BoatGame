@@ -5,12 +5,77 @@ import datetime
 import random
 from discord.ext import commands
 
+# PRÉPARATION DE LA VARIABLE MYDB POUR LA CONNEXION AVEC LA DB
 mydb = mysql.connector.connect(
   host = os.getenv("DBHOST"),
   user=os.getenv("DBUSRNAME"),
   password=os.getenv("DBMDP"),
   database=os.getenv("DBNAME")
 )
+
+
+class PofView(discord.ui.View):
+  """ Class of button View
+  
+  Attributes :
+    discord.ui.View : ...
+  """
+  
+  def __init__(self) -> None:
+    """ Init View class """
+    super().__init__(timeout=None)
+    
+    self.pof=None
+  
+  # BUTTON PILE
+  @discord.ui.button(label="Pile", style= discord.ButtonStyle.secondary, custom_id="PileBtn")
+  async def pileBtnCallback(self, interaction: discord.Interaction, button : discord.ui.Button):
+    """ Callback function of the button 'PileBtn'
+    
+    Attributes :
+      self : The view itself
+      interaction : Interaction link to the button.
+      button : The button itself
+    """
+    
+    self.pof = 1 # Correspond à pile
+    
+    # MODIFICATION SUR LE BOUTON
+    button.disabled=True
+    button.style=discord.ButtonStyle.primary
+    
+    # MODIFICATION DE L'AUTRE BOUTON
+    buttonFace = [x for x in self.children if x.custom_id=="FaceBtn"][0]
+    buttonFace.disabled=True
+    
+    # ON RECHARGE LA VUE ET ON L'ARRETE.
+    await interaction.response.edit_message(view=self)
+    self.stop()
+  
+  # BUTTON FACE
+  @discord.ui.button(label="Face", style= discord.ButtonStyle.secondary, custom_id="FaceBtn")
+  async def faceBtnCallback(self, interaction: discord.Interaction, button : discord.ui.Button):
+    """ Callback function of the button 'FaceBtn'
+    
+    Attributes :
+      self : The view itself
+      interaction : Interaction link to the button.
+      button : The button itself
+    """
+    
+    self.pof = 0 # Correspond à face
+    
+    # MODIFICATION SUR LE BOUTON
+    button.disabled=True
+    button.style=discord.ButtonStyle.primary
+    
+    # MODIFICATION DE L'AUTRE BOUTON
+    buttonFace = [x for x in self.children if x.custom_id=="PileBtn"][0]
+    buttonFace.disabled=True
+    
+    # ON RECHARGE LA VUE ET ON L'ARRETE.
+    await interaction.response.edit_message(view=self)
+    self.stop()
 
 
 class GameCmd(commands.Cog):
@@ -133,15 +198,26 @@ class GameCmd(commands.Cog):
   
   # PILE OU FACE GAME
   @commands.command(brief="Parier une certaines somme sur pile ou face.",description="Parier une somme donnée qui si vous avez bon sera multiplié aléatoirement entre 1.1 et 10.",aliases=['jeu2'])
-  async def pof(self, ctx : commands.Context, pof : int, amount : int = 1) -> discord.Message:
+  async def pof(self, ctx : commands.Context, amount : int = 1) -> discord.Message:
     """ User bet some money and try to win more on heads or tails game.
     
     Attributes :
       self : ...
       ctx : Context of the commands.
-      pof : Number. 1 = Heads; 0 = Tails;
       amount : Amount bet with a minimum of 1.
     """
+    
+    # RECUPERATION DE LA VUE ET ENVOIE DE CELLE-CI
+    pofView = PofView()
+    pofView.amount = amount
+    await ctx.send(view=pofView)
+    await pofView.wait() # Attente de réponse
+    
+    # INITIALISATION DE LA VALEUR pof
+    if pofView.pof == 1:
+      pof = 1
+    else:
+      pof = 0
     
     # VÉRIFICATION DES CONDITIONS DU PARI.
     cursor = mydb.cursor(buffered=True, dictionary=True)
@@ -175,7 +251,7 @@ class GameCmd(commands.Cog):
     
     
     # ON LANCE LE PARI.
-    winningNbr = random.randint(1, 2)
+    winningNbr = random.randint(0, 1)
     finalNbr = 0
     winner = False
     
@@ -218,8 +294,6 @@ class GameCmd(commands.Cog):
       
       # ON RETOURNE LE MESSAGE FINAL.
       return await ctx.send(embed=info_embed)
-    
-    return
   
   @pof.error
   async def pof_error(self, ctx : commands.Context, error : commands.CommandError):
